@@ -13,3 +13,4 @@ RUN apt-get update && \
 RUN pip install -r requirements.txt
 RUN wget https://storage.googleapis.com/tf_model_garden/vision/movinet/movinet_a1_stream.tar.gz -O movinet_a1_stream.tar.gz -q
 RUN tar -xvf movinet_a1_stream.tar.gz && rm movinet_a1_stream.tar.gz
+

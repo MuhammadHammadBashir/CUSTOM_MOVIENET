@@ -19,7 +19,20 @@ ap.add_argument("-d", "--data", type=str, required=True,
 ap.add_argument("--save", action='store_true',
                 help="Save video")
 
-args = vars(ap.parse_args())
+# args = vars(ap.parse_args())
+
+# Bypass command-line arguments by setting values directly for debugging
+args = ap.parse_args([
+    "--tflite", "model/model.tflite",
+    "-i", "drumming.mp4",
+    "-n", "32",
+    "-d", "data/test",
+    "--save"  # This argument is flag-based, so just include it without a value
+])
+
+# Convert to a dictionary if needed
+args = vars(args)
+
 video_path = args["source"]
 
 # Load TFLite Model
@@ -52,8 +65,11 @@ image_size = (args['resolution'], args['resolution'])
 
 frames_queue = deque(maxlen=args['num_frames'])
 
-label_map = sorted(os.listdir(args['data']))
+# label_map = sorted(os.listdir(args['data']))
 
+# Read activity names from the text file
+with open('activity_names.txt', 'r') as file:
+    label_map = [line.strip() for line in file]
 def get_top_k(probs, k=5, label_map=label_map):
     """Outputs the top k model labels and probabilities on the given video."""
     top_predictions = tf.argsort(probs, axis=-1, direction='DESCENDING')[:k]
@@ -63,7 +79,7 @@ def get_top_k(probs, k=5, label_map=label_map):
     return tuple(zip(top_labels, top_probs))
 
 p_time = 0
-
+counter = 0
 while True:
     success, img = cap.read()
     if not success:
@@ -89,10 +105,16 @@ while True:
             states = outputs
 
         probs = tf.nn.softmax(logits)
-        top_k = get_top_k(probs, k=1)
-        print(top_k[0])
-        # for label, prob in top_k:
-        #     print(label, prob)
+        # print(probs)
+        
+        top_k = get_top_k(probs, k=5)
+        # print(top_k[0])
+        counter  = counter + 1
+        print(counter)
+        for label, prob in top_k:
+            print(label, prob)
+        print("***************")
+        # exit()
         cv2.putText(img, f'{top_k[0][0]} {top_k[0][1]:.3}', (50, 60), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
     
     # FPS
@@ -100,17 +122,17 @@ while True:
     fps_ = 1/(c_time-p_time)
     p_time = c_time
 
-    print(fps_)
+    # print(fps_)
 
     # Write Video
     if args['save']:
         out_vid.write(img)
 
-    cv2.imshow('img', img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+#     cv2.imshow('img', img)
+#     if cv2.waitKey(1) & 0xFF == ord('q'):
+#         break
 
-cap.release()
+# cap.release()
 if args['save']:
     out_vid.release()
-cv2.destroyAllWindows()
+# cv2.destroyAllWindows()

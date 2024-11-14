@@ -8,31 +8,74 @@ from utils import FrameGenerator
 import argparse
 
 
+# ap = argparse.ArgumentParser()
+# ap.add_argument("-i", "--data", type=str, required=True,
+#                 help="path to data dir")
+# ap.add_argument("-b", "--batch_size", type=int, default=8,
+#                 help="batch_size")
+# ap.add_argument("-n", "--num_frames", type=int, default=8,
+#                 help="num_frames")
+# ap.add_argument("-s", "--resolution", type=int, default=172,
+#                 help="Video resolution")
+# ap.add_argument("-e", "--num_epochs", type=int, default=5,
+#                 help="number of training epochs")
+# ap.add_argument("--pre_ckpt", type=str, required=True,
+#                 help="path to pre-trained checkpoint dir")
+# ap.add_argument("--save_ckpt", type=str, required=True,
+#                 help="path to save trained checkpoint eg: checkpoints/ckpt-1")
+# ap.add_argument("--export", type=str, required=True,
+#                 help="path to export model")
+# ap.add_argument("-id", "--model_id", type=str, default='a1',
+#                 help="model type, eg: a2")
+# ap.add_argument("-o", "--save", type=str, required=True,
+#                 help="path to export tflite model")
+# ap.add_argument("-f", "--float", type=int, default=32,
+#                 choices=[32, 16],
+#                 help="model quantization")
+# args = vars(ap.parse_args())
+
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--data", type=str, required=True,
                 help="path to data dir")
 ap.add_argument("-b", "--batch_size", type=int, default=8,
-                help="batch_size")
+                help="batch size")
 ap.add_argument("-n", "--num_frames", type=int, default=8,
-                help="num_frames")
+                help="number of frames")
 ap.add_argument("-s", "--resolution", type=int, default=172,
-                help="Video resolution")
+                help="video resolution")
 ap.add_argument("-e", "--num_epochs", type=int, default=5,
                 help="number of training epochs")
 ap.add_argument("--pre_ckpt", type=str, required=True,
                 help="path to pre-trained checkpoint dir")
 ap.add_argument("--save_ckpt", type=str, required=True,
-                help="path to save trained checkpoint eg: checkpoints/ckpt-1")
+                help="path to save trained checkpoint (e.g., checkpoints/ckpt-1)")
 ap.add_argument("--export", type=str, required=True,
                 help="path to export model")
 ap.add_argument("-id", "--model_id", type=str, default='a1',
-                help="model type, eg: a2")
+                help="model type (e.g., a2)")
 ap.add_argument("-o", "--save", type=str, required=True,
                 help="path to export tflite model")
 ap.add_argument("-f", "--float", type=int, default=32,
                 choices=[32, 16],
                 help="model quantization")
-args = vars(ap.parse_args())
+
+# Bypass command-line arguments by setting values directly for debugging
+args = ap.parse_args([
+    "-i", "training_data",
+    "-b", "4",
+    "-n", "16",
+    "-s", "172",
+    "-e", "10",
+    "--pre_ckpt", "movinet_a1_stream",
+    "--save_ckpt", "checkpoints/trained_ckpt",
+    "--export", "export/model",
+    "-id", "a2",
+    "-o", "export/tflite_model",
+    "-f", "16"
+])
+
+# Convert to a dictionary if needed
+args = vars(args)
 
 
 # Load Data
