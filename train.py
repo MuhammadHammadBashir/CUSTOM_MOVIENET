@@ -61,7 +61,7 @@ ap.add_argument("-f", "--float", type=int, default=32,
 
 # Bypass command-line arguments by setting values directly for debugging
 args = ap.parse_args([
-    "-i", "training_data",
+    "-i", "/content/drive/MyDrive/MOVIE_NET_TRAINING/training_data",
     "-b", "4",
     "-n", "16",
     "-s", "172",
